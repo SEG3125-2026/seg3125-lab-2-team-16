@@ -1,237 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>EasyGrocery</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    :root {
-      --primary: #4f46e5;
-      --bg: #f3f4f6;
-      --card: #ffffff;
-    }
-
-    * { box-sizing: border-box; font-family: Arial, sans-serif; margin: 0; padding: 0; }
-
-    body {
-      background: var(--bg);
-      height: 100vh;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* Header */
-    header {
-      text-align: center;
-      padding: 1.5rem;
-      font-size: 1.8rem;
-      font-weight: bold;
-      background: white;
-      border-bottom: 1px solid #e5e7eb;
-    }
-
-    /* Navigation */
-    nav {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      padding: 1rem;
-      background: var(--primary);
-    }
-
-    nav button {
-      background: white;
-      color: var(--primary);
-      border: none;
-      padding: 0.6rem 1.2rem;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    nav button:hover { opacity: 0.9; }
-
-    /* Slider */
-    .slider-wrapper {
-      flex: 1;
-      overflow: hidden;
-      width: 100%;
-      position: relative;
-    }
-
-    .slider {
-      display: flex;
-      width: 300%;
-      transition: transform 0.5s ease-in-out;
-      height: 100%;
-    }
-
-    /* Zones */
-    .zone {
-      flex-shrink: 0;
-      width: 100%;
-      height: 100%;
-      padding: 2rem;
-      background: var(--card);
-      border-radius: 12px;
-      margin: 0 0.5rem;
-      box-shadow: 0 6px 15px rgba(0,0,0,0.08);
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      overflow-y: auto; /* scroll inside zone if content exceeds viewport */
-    }
-
-    h2 { margin-bottom: 1rem; }
-
-    /* Login */
-    .login-box {
-      max-width: 400px;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-    input { padding: 0.6rem; border-radius: 6px; border: 1px solid #d1d5db; }
-    button.action { background: var(--primary); color: white; border: none; padding: 0.6rem; border-radius: 6px; cursor: pointer; }
-
-    /* Products */
-    .products {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 1rem;
-      flex: 1;
-      overflow-y: auto;
-    }
-    .product {
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      padding: 1rem;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      cursor: pointer;
-    }
-    .product button { margin-top: 0.5rem; }
-
-    /* Cart */
-    .cart-list { list-style: none; padding: 0; overflow-y: auto; flex: 1; }
-    .cart-list li { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #e5e7eb; }
-    .empty { color: #6b7280; font-style: italic; }
-  </style>
+  <link rel="stylesheet" href="./css/main.css">
 </head>
 
 <body>
 
-<header>EasyGrocery</header>
+  <header>EasyGrocery</header>
 
-<nav>
-  <button onclick="goToSlide(0)">Login</button>
-  <button onclick="goToSlide(1)">Products</button>
-  <button onclick="goToSlide(2)">Cart</button>
-</nav>
+  <nav>
+    <button onclick="goToSlide(0)">Login</button>
+    <button onclick="goToSlide(1)">Products</button>
+    <button onclick="goToSlide(2)">Cart</button>
+  </nav>
 
-<div class="slider-wrapper">
-  <div class="slider" id="slider">
+  <div class="slider-wrapper">
+    <div class="slider" id="slider">
 
-    <!-- Zone 1: Login -->
-    <section class="zone" id="login" tabindex="-1">
-      <h2>Login</h2>
-      <div class="login-box">
-        <input type="text" placeholder="Enter your name">
-        <button class="action">Login</button>
-      </div>
-    </section>
+      <!-- Zone 1: Login -->
+      <section class="zone" id="login" tabindex="-1">
+        <h2>Login</h2>
 
-    <!-- Zone 2: Products -->
-    <section class="zone" id="product" tabindex="-1">
-      <h2>Products</h2>
-      <div class="products">
-        <!-- Products in HTML -->
-        <div class="product">
-          <h3>Apple</h3><p>$1.50</p><button class="action" onclick="addToCart('Apple')">Add to Cart</button>
+        <div class="login-box">
+          <input type="text" id="usernameInput" placeholder="Enter your user name">
+          <button class="action" onclick="login()">Login</button>
         </div>
-        <div class="product">
-          <h3>Banana</h3><p>$0.75</p><button class="action" onclick="addToCart('Banana')">Add to Cart</button>
-        </div>
-        <div class="product">
-          <h3>Orange</h3><p>$1.20</p><button class="action" onclick="addToCart('Orange')">Add to Cart</button>
-        </div>
-        <div class="product">
-          <h3>Milk</h3><p>$2.50</p><button class="action" onclick="addToCart('Milk')">Add to Cart</button>
-        </div>
-        <div class="product">
-          <h3>Bread</h3><p>$2.00</p><button class="action" onclick="addToCart('Bread')">Add to Cart</button>
-        </div>
-        <div class="product">
-          <h3>Eggs</h3><p>$3.00</p><button class="action" onclick="addToCart('Eggs')">Add to Cart</button>
-        </div>
-        <div class="product">
-          <h3>Cheese</h3><p>$4.00</p><button class="action" onclick="addToCart('Cheese')">Add to Cart</button>
-        </div>
-        <div class="product">
-          <h3>Tomato</h3><p>$1.80</p><button class="action" onclick="addToCart('Tomato')">Add to Cart</button>
-        </div>
-        <div class="product">
-          <h3>Lettuce</h3><p>$1.00</p><button class="action" onclick="addToCart('Lettuce')">Add to Cart</button>
-        </div>
-        <div class="product">
-          <h3>Chicken</h3><p>$5.50</p><button class="action" onclick="addToCart('Chicken')">Add to Cart</button>
-        </div>
-      </div>
-    </section>
 
-    <!-- Zone 3: Cart -->
-    <section class="zone" id="cart" tabindex="-1">
-      <h2>Cart</h2>
-      <ul class="cart-list" id="cartList">
-        <li class="empty">Your cart is empty</li>
-      </ul>
-    </section>
+        <div class="separator">
+          <span>or</span>
+        </div>
 
+
+        <!-- Additional form -->
+        <form class="extra-form" id="preferences-form">
+          <h3>Preferences</h3>
+
+          <!-- Dietary preferences -->
+          <fieldset>
+            <legend>Dietary needs</legend>
+
+            <label>
+              <input type="checkbox" name="diet" value="gluten">
+              Gluten allergy
+            </label>
+
+            <label>
+              <input type="checkbox" name="diet" value="vegetarian">
+              Vegetarian
+            </label>
+
+            <label>
+              <input type="checkbox" name="diet" value="vegan">
+              Vegan
+            </label>
+
+            <label>
+              <input type="checkbox" name="diet" value="lactose">
+              Lactose intolerant
+            </label>
+
+            <label>
+              <input type="checkbox" name="diet" value="diabetes">
+              Diabetes
+            </label>
+
+            <label>
+              <input type="checkbox" name="diet" value="expense">
+              budget friendly
+            </label>
+          </fieldset>
+
+          <!-- Organic choice -->
+          <fieldset>
+            <legend>Food type</legend>
+
+            <label>
+              <input type="radio" name="organic" value="organic" required>
+              Organic
+            </label>
+
+            <label>
+              <input type="radio" name="organic" value="non-organic">
+              Non-organic
+            </label>
+
+            <label>
+              <input type="radio" name="organic" value="na">
+              N.A.
+            </label>
+          </fieldset>
+
+          <!-- Accessibility toggle -->
+          <label class="vision-toggle">
+            <input type="checkbox" value="visions" id="visionToggle" onclick="visiable()">
+            Large text (for vision support)
+          </label>
+
+          <button type="submit" class="action">Submit</button>
+        </form>
+
+      </section>
+
+
+      <!-- Zone 2: Products -->
+      <section class="zone" id="product" tabindex="-1">
+        <h2>Products</h2>
+        <div class="products">
+          <!-- Products in HTML -->
+          <div class="product">
+            <div><img src="./img/carrot.png"></div>
+            <h3 id="item">Carrots</h3>
+            <p id="price">$1.49</p>
+            <div class="buttons">
+              <button class="action" onclick="addToCart(0)">Add to Cart</button>
+            </div>
+          </div>
+          <div class="product">
+            <div><img src="./img/broccoli.png"></div>
+            <h3 id="item">Broccoli</h3>
+            <p id="price">$1.99</p>
+            <div class="buttons">
+              <button class="action" onclick="addToCart(1)">Add to Cart</button>
+            </div>
+          </div>
+          <div class="product">
+            <div><img src="./img/apples.png"></div>
+            <h3 id="item">Apples</h3>
+            <p id="price">$2.49</p>
+            <div class="buttons">
+              <button class="action" onclick="addToCart(2)">Add to Cart</button>
+            </div>
+          </div>
+          <div class="product">
+            <div><img src="./img/milk.png"></div>
+            <h3 id="item">Milk</h3>
+            <p id="price">$2.79</p>
+            <div class="buttons">
+              <button class="action" onclick="addToCart(3)">Add to Cart</button>
+            </div>
+          </div>
+          <div class="product">
+            <div><img src="./img/bread.png"></div>
+            <h3 id="item">Whole Weat Bread</h3>
+            <p id="price">$2.99</p>
+            <div class="buttons">
+              <button class="action" onclick="addToCart(4)">Add to Cart</button>
+            </div>
+          </div>
+          <div class="product">
+            <div><img src="./img/rice.png"></div>
+            <h3 id="item">White Rice</h3>
+            <p id="price">$3.99</p>
+            <div class="buttons">
+              <button class="action" onclick="addToCart(5)">Add to Cart</button>
+            </div>
+          </div>
+          <div class="product">
+            <div><img src="./img/g-bread.png"></div>
+            <h3 id="item">Gluten-Free Bread</h3>
+            <p id="price">$4.99</p>
+            <div class="buttons">
+              <button class="action" onclick="addToCart(6)">Add to Cart</button>
+            </div>
+          </div>
+          <div class="product">
+            <div><img src="./img/egg.png"></div>
+            <h3 id="item">Organic Eggs</h3>
+            <p id="price">$5.49</p>
+            <div class="buttons">
+              <button class="action" onclick="addToCart(7)">Add to Cart</button>
+            </div>
+          </div>
+          <div class="product">
+            <div><img src="./img/chicken.png"></div>
+            <h3 id="item">Chicken Breast</h3>
+            <p id="price">$6.99</p>
+            <div class="buttons">
+              <button class="action" onclick="addToCart(8)">Add to Cart</button>
+            </div>
+          </div>
+          <div class="product">
+            <div><img src="./img/samon.png"></div>
+            <h3 id="item">Salmon Fillet</h3>
+            <p id="price">$8.99</p>
+            <div class="buttons">
+              <button class="action" onclick="addToCart(9)">Add to Cart</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Zone 3: Cart -->
+      <section class="zone" id="cart" tabindex="-1">
+        <h2>Cart</h2>
+        <ul class="cart-list" id="cartList">
+          <li class="empty">Your cart is empty</li>
+        </ul>
+      </section>
+
+    </div>
   </div>
-</div>
-
-<script>
-  const slider = document.getElementById("slider");
-  const cart = [];
-  let currentSlide = 0;
-
-  function goToSlide(index) {
-    index = Math.max(0, Math.min(index, 2));
-    currentSlide = index;
-    slider.style.transform = `translateX(-${index * 100}%)`;
-
-    const zoneIds = ['login', 'product', 'cart'];
-    const zoneEl = document.getElementById(zoneIds[index]);
-    if (zoneEl) zoneEl.focus({ preventScroll: true });
-  }
-
-  function addToCart(item) {
-    cart.push(item);
-    renderCart();
-    goToSlide(2);
-  }
-
-  function renderCart() {
-    const list = document.getElementById("cartList");
-    list.innerHTML = '';
-    if (cart.length === 0) {
-      list.innerHTML = '<li class="empty">Your cart is empty</li>';
-      return;
-    }
-    cart.forEach((item, index) => {
-      const li = document.createElement("li");
-      li.innerHTML = `${item} <button onclick="removeItem(${index})">Remove</button>`;
-      list.appendChild(li);
-    });
-  }
-
-  function removeItem(index) {
-    cart.splice(index, 1);
-    renderCart();
-  }
-</script>
-
+  <div class="footer">
+      Site created by Pierre Georges, Eknoor Goraya,and Ziad Tariq
+  </div>
+  <script src="./js/main.js"></script>
+  <script src="./js/product2cart.js"></script>
 </body>
+
 </html>
