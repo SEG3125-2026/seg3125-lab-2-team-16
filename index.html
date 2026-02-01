@@ -107,90 +107,12 @@
 
 
       <!-- Zone 2: Products -->
+      <!-- Products are dynamically rendered using JavaScript -->
+      <!-- Enhanced by Eknoor Goraya: Dynamic product rendering with automatic price sorting -->
       <section class="zone" id="product" tabindex="-1">
         <h2>Products</h2>
         <div class="products">
-          <!-- Products in HTML -->
-          <div class="product">
-            <div><img src="./img/carrot.png"></div>
-            <h3 id="item">Carrots</h3>
-            <p id="price">$1.49</p>
-            <div class="buttons">
-              <button class="action" onclick="addToCart(0)">Add to Cart</button>
-            </div>
-          </div>
-          <div class="product">
-            <div><img src="./img/broccoli.png"></div>
-            <h3 id="item">Broccoli</h3>
-            <p id="price">$1.99</p>
-            <div class="buttons">
-              <button class="action" onclick="addToCart(1)">Add to Cart</button>
-            </div>
-          </div>
-          <div class="product">
-            <div><img src="./img/apples.png"></div>
-            <h3 id="item">Apples</h3>
-            <p id="price">$2.49</p>
-            <div class="buttons">
-              <button class="action" onclick="addToCart(2)">Add to Cart</button>
-            </div>
-          </div>
-          <div class="product">
-            <div><img src="./img/milk.png"></div>
-            <h3 id="item">Milk</h3>
-            <p id="price">$2.79</p>
-            <div class="buttons">
-              <button class="action" onclick="addToCart(3)">Add to Cart</button>
-            </div>
-          </div>
-          <div class="product">
-            <div><img src="./img/bread.png"></div>
-            <h3 id="item">Whole Weat Bread</h3>
-            <p id="price">$2.99</p>
-            <div class="buttons">
-              <button class="action" onclick="addToCart(4)">Add to Cart</button>
-            </div>
-          </div>
-          <div class="product">
-            <div><img src="./img/rice.png"></div>
-            <h3 id="item">White Rice</h3>
-            <p id="price">$3.99</p>
-            <div class="buttons">
-              <button class="action" onclick="addToCart(5)">Add to Cart</button>
-            </div>
-          </div>
-          <div class="product">
-            <div><img src="./img/g-bread.png"></div>
-            <h3 id="item">Gluten-Free Bread</h3>
-            <p id="price">$4.99</p>
-            <div class="buttons">
-              <button class="action" onclick="addToCart(6)">Add to Cart</button>
-            </div>
-          </div>
-          <div class="product">
-            <div><img src="./img/egg.png"></div>
-            <h3 id="item">Organic Eggs</h3>
-            <p id="price">$5.49</p>
-            <div class="buttons">
-              <button class="action" onclick="addToCart(7)">Add to Cart</button>
-            </div>
-          </div>
-          <div class="product">
-            <div><img src="./img/chicken.png"></div>
-            <h3 id="item">Chicken Breast</h3>
-            <p id="price">$6.99</p>
-            <div class="buttons">
-              <button class="action" onclick="addToCart(8)">Add to Cart</button>
-            </div>
-          </div>
-          <div class="product">
-            <div><img src="./img/samon.png"></div>
-            <h3 id="item">Salmon Fillet</h3>
-            <p id="price">$8.99</p>
-            <div class="buttons">
-              <button class="action" onclick="addToCart(9)">Add to Cart</button>
-            </div>
-          </div>
+          <!-- Products will be dynamically inserted here -->
         </div>
       </section>
 
@@ -207,8 +129,9 @@
   <div class="footer">
       Site created by Pierre Georges, Eknoor Goraya,and Ziad Tariq
   </div>
-  <script src="./js/main.js"></script>
+  <script src="./js/products.js"></script>
   <script src="./js/product2cart.js"></script>
+  <script src="./js/main.js"></script>
 </body>
 
 </html>
