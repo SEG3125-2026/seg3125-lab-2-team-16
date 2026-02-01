@@ -1,8 +1,18 @@
+// Enhanced cart functionality using centralized product data
+
 const slider = document.getElementById("slider");
+    // Cart arrays - made globally accessible for product rendering
     const cartItem = [];
     const cartPrice = [];
     const cartAmount = [];
     const cartIndex = [];
+    
+    // Make cart arrays globally accessible
+    window.cartItem = cartItem;
+    window.cartPrice = cartPrice;
+    window.cartAmount = cartAmount;
+    window.cartIndex = cartIndex;
+    
     let currentSlide = 0;
 
     function goToSlide(index) {
@@ -14,82 +24,80 @@ const slider = document.getElementById("slider");
       const zoneEl = document.getElementById(zoneIds[index]);
       if (zoneEl) zoneEl.focus({ preventScroll: true });
     }
-    function addToCart(index) {
-      let item;
-      let price;
-      switch (index) {
-        case 0:
-          item = "Carrots";
-          price = 1.49;
-          break;
-        case 1:
-          item = "Broccoli";
-          price = 1.99;
-          break;
-        case 2:
-          item = "Apples";
-          price = 2.49;
-          break;
-        case 3:
-          item = "Milk";
-          price = 2.79;
-          break;
-        case 4:
-          item = "Whole Weat Bread";
-          price = 2.99;
-          break;
-        case 5:
-          item = "White Rice";
-          price = 3.99;
-          break;
-        case 6:
-          item = "Gluten-Free Bread";
-          price = 4.99;
-          break;
-        case 7:
-          item = "Organic Eggs";
-          price = 5.49;
-          break;
-        case 8:
-          item = "Chicken Breast";
-          price = 6.99;
-          break;
-        case  9:
-          item = "Salmon Fillet";
-          price = 8.99;
+    
+    function addToCart(productId) {
+      const product = getProductById(productId);
+      if (!product) return;
+      
+      // Check if product is already in cart
+      const existingIndex = cartIndex.indexOf(productId);
+      if (existingIndex !== -1) {
+        // If already in cart, just increase quantity
+        addToAmount(productId);
+        return;
       }
-      cartItem.push(item);
-      cartPrice.push(price);
+      
+      cartItem.push(product.name);
+      cartPrice.push(product.price);
       cartAmount.push(1);
-      cartIndex.push(index);
-      const button = document.getElementsByClassName("buttons");
-      button[index].innerHTML=`<button class="action" onclick="subToAmount(${index})">-</button>
-      <p class="amount">1</p>
-      <button class="action" onclick="addToAmount(${index})">+</button>`;
+      cartIndex.push(productId);
+      
+      // Update the button for this product
+      updateProductButton(productId, 1);
       renderCart();
     }
-    function addToAmount(index){
-      let tempIndex = cartIndex.indexOf(index);
-      cartAmount[tempIndex]=cartAmount[tempIndex]+1;
-      const product = document.getElementsByClassName("buttons");
-      product[index].innerHTML=`<button class="action" onclick="subToAmount(${index})">-</button>
-      <p class="amount">${cartAmount[tempIndex]}</p>
-      <button class="action" onclick="addToAmount(${index})">+</button>`;
-      renderCart()
+    function addToAmount(productId){
+      let tempIndex = cartIndex.indexOf(productId);
+      if (tempIndex === -1) return;
+      
+      cartAmount[tempIndex] = cartAmount[tempIndex] + 1;
+      updateProductButton(productId, cartAmount[tempIndex]);
+      renderCart();
     }
-    function subToAmount(index){
-      const product = document.getElementsByClassName("buttons");
-      let tempIndex = cartIndex.indexOf(index);
+    
+    function subToAmount(productId){
+      let tempIndex = cartIndex.indexOf(productId);
+      if (tempIndex === -1) return;
+      
       if (cartAmount[tempIndex] <= 1){
-        product[index].innerHTML=`<button class="action" onclick="addToCart(${index})">Add to Cart</button>`;
+        updateProductButton(productId, 0);
         removeItem(tempIndex);
         return;
       }
-      cartAmount[tempIndex]=cartAmount[tempIndex]-1;
-      product[index].innerHTML=`<button class="action" onclick="subToAmount(${index})">-</button>
-      <p class="amount">${cartAmount[tempIndex]}</p>
-      <button class="action" onclick="addToAmount(${index})">+</button>`;
-      renderCart()
+      cartAmount[tempIndex] = cartAmount[tempIndex] - 1;
+      updateProductButton(productId, cartAmount[tempIndex]);
+      renderCart();
+    }
+    
+    // Helper function to update product button based on cart state
+    function updateProductButton(productId, quantity) {
+      const productElement = document.querySelector(`[data-product-id="${productId}"]`);
+      if (!productElement) return;
+      
+      const buttonContainer = productElement.querySelector('.buttons');
+      if (!buttonContainer) return;
+      
+      if (quantity === 0) {
+        buttonContainer.innerHTML = `<button class="action" onclick="addToCart(${productId})">Add to Cart</button>`;
+      } else {
+        buttonContainer.innerHTML = `<button class="action" onclick="subToAmount(${productId})">-</button>
+          <p class="amount">${quantity}</p>
+          <button class="action" onclick="addToAmount(${productId})">+</button>`;
+      }
+    }
+    
+    // Function to refresh all product buttons based on current cart state
+    function refreshProductButtons() {
+      if (typeof renderProducts === 'function') {
+        // Get current filters and re-render products to update buttons
+        const checkedDiets = Array.from(
+          document.querySelectorAll('input[name="diet"]:checked')
+        ).map(input => input.value);
+        const organicChoice = document.querySelector('input[name="organic"]:checked')?.value || 'na';
+        
+        const filteredProducts = filterProducts(checkedDiets, organicChoice);
+        renderProducts(filteredProducts);
+      }
     }
     function renderCart() {
       const list = document.getElementById("cartList");
@@ -98,44 +106,55 @@ const slider = document.getElementById("slider");
         list.innerHTML = '<li class="empty">Your cart is empty</li>';
         return;
       }
-      sortCart()
+      
+      // Sort cart by price (ascending)
+      sortCartByPrice();
+      
       let total = 0;
       cartItem.forEach((item, index) => {
         const li = document.createElement("li");
-        li.innerHTML = `<h3>${item}</h3> <p>${cartPrice[index]}$</p> <button class="action" onclick="subToAmount(${cartIndex[index]})">-</button>
-      <p class="amount">${cartAmount[index]}</p>
-      <button class="action" onclick="addToAmount(${cartIndex[index]})">+</button>`;
+        const itemTotal = (cartAmount[index] * cartPrice[index]).toFixed(2);
+        li.innerHTML = `<h3>${item}</h3> 
+          <p>$${cartPrice[index].toFixed(2)} × ${cartAmount[index]} = $${itemTotal}</p> 
+          <div class="cart-buttons">
+            <button class="action" onclick="subToAmount(${cartIndex[index]})">-</button>
+            <p class="amount">${cartAmount[index]}</p>
+            <button class="action" onclick="addToAmount(${cartIndex[index]})">+</button>
+          </div>`;
         list.appendChild(li);
-        total = total + (cartAmount[index]*cartPrice[index]);
+        total = total + (cartAmount[index] * cartPrice[index]);
       });
+      
       const li = document.createElement("li");
-        li.innerHTML = `<h3>Total: </h3> <p>${Math.round(total*100)/100}$</p>`;
-        list.appendChild(li);
+      li.className = "cart-total";
+      li.innerHTML = `<h3>Total: </h3> <p>$${total.toFixed(2)}</p>`;
+      list.appendChild(li);
     }
 
-    function sortCart(){
-      const n = cartIndex.length;
-      for (let i = 0; i < n; i++) {
-        for (let j = 0; j < n - i - 1; j++) {
-          if (cartIndex[j] > cartIndex[j + 1]) {
-            let temp0 = cartIndex[j];
-            cartIndex[j] = cartIndex[j + 1];
-            cartIndex[j + 1] = temp0;
-
-            let temp1 = cartAmount[j];
-            cartAmount[j] = cartAmount[j + 1];
-            cartAmount[j + 1] = temp1;
-
-            let temp2 = cartItem[j];
-            cartItem[j] = cartItem[j + 1];
-            cartItem[j + 1] = temp2;
-
-            let temp3 = cartPrice[j];
-            cartPrice[j] = cartPrice[j + 1];
-            cartPrice[j + 1] = temp3;
-          }
-        }
-      }
+    // Enhanced cart sorting by price
+    function sortCartByPrice(){
+      // Create array of indices to sort
+      const indices = cartIndex.map((_, i) => i);
+      
+      // Sort indices based on price
+      indices.sort((a, b) => cartPrice[a] - cartPrice[b]);
+      
+      // Reorder all arrays based on sorted indices
+      const sortedItem = indices.map(i => cartItem[i]);
+      const sortedPrice = indices.map(i => cartPrice[i]);
+      const sortedAmount = indices.map(i => cartAmount[i]);
+      const sortedIndex = indices.map(i => cartIndex[i]);
+      
+      // Update arrays
+      cartItem.length = 0;
+      cartPrice.length = 0;
+      cartAmount.length = 0;
+      cartIndex.length = 0;
+      
+      cartItem.push(...sortedItem);
+      cartPrice.push(...sortedPrice);
+      cartAmount.push(...sortedAmount);
+      cartIndex.push(...sortedIndex);
     }
 
     function removeItem(index) {

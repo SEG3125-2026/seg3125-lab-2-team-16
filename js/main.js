@@ -14,14 +14,18 @@ function login() {
         document.querySelector('input[value="na"]').checked = true;
         document.querySelector('input[value="visions"]').checked = true;
         visiable();
-        vegetarian();
-        expensive();
+        document.querySelector('input[value="expense"]').checked = true;
+        applyFilters();
       } else if (username.toLowerCase() === "eric") {
         greeting = "Hi Eric!";
         document.querySelector('input[value="gluten"]').checked = true;
         document.querySelector('input[value="organic"]').checked = true;
-        glutton();
-        organic();
+        applyFilters();
+      }
+      else{
+        signOut();
+        alert("username not found");
+        return;
       }
 
       loginBox[0].innerHTML = `<p>${greeting}</p>
@@ -48,77 +52,105 @@ function login() {
 
     const form = document.getElementById("preferences-form");
     form.addEventListener("submit", function (e) {
-      allProduct();
       e.preventDefault();
+      applyFilters();
+    });
+    
+    // Initialize products on page load
+    // Wait for all scripts to load before initializing
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        // Small delay to ensure all scripts are loaded
+        setTimeout(function() {
+          allProduct();
+        }, 100);
+      });
+    } else {
+      // DOM already loaded
+      setTimeout(function() {
+        allProduct();
+      }, 100);
+    }
+
+    // Enhanced filtering system using centralized product data
+    function applyFilters() {
       const checkedDiets = Array.from(
         document.querySelectorAll('input[name="diet"]:checked')
       ).map(input => input.value);
-      const organicChoice = document.querySelector('input[name="organic"]:checked')?.value;
-      if (checkedDiets.includes("vegetarian")) vegetarian();
-      if (checkedDiets.includes("vegan")) vegan();
-      if (checkedDiets.includes("lactose")) lactose();
-      if (checkedDiets.includes("gluten")) glutton();
-      if (checkedDiets.includes("diabetes")) diabetic();
-      if (checkedDiets.includes("expense")) expensive();
-      if (organicChoice === "organic") organic();
-      else if (organicChoice === "non-organic") nonorganic();
-    });
-
+      const organicChoice = document.querySelector('input[name="organic"]:checked')?.value || 'na';
+      
+      const filteredProducts = filterProducts(checkedDiets, organicChoice);
+      renderProducts(filteredProducts);
+    }
+    
     function organic(){
-      const products = document.querySelectorAll('.product');
-      products[0].style.display = 'none';
-      products[3].style.display = 'none';
-      products[4].style.display = 'none';
-      products[5].style.display = 'none';
-      products[6].style.display = 'none';
-      products[8].style.display = 'none';
-      products[9].style.display = 'none';
+      applyFilters();
     }
     function nonorganic(){
-      const products = document.querySelectorAll('.product');
-      products[1].style.display = 'none';
-      products[2].style.display = 'none';
-      products[7].style.display = 'none';
+      applyFilters();
     }
     function vegetarian(){
-      const products = document.querySelectorAll('.product');
-      products[8].style.display = 'none';
-      products[9].style.display = 'none';
+      applyFilters();
     }
     function vegan(){
-      const products = document.querySelectorAll('.product');
-      products[3].style.display = 'none';
-      products[7].style.display = 'none';
-      products[8].style.display = 'none';
-      products[9].style.display = 'none';
+      applyFilters();
     }
     function lactose(){
-      const products = document.querySelectorAll('.product');
-      products[3].style.display = 'none';
+      applyFilters();
     }
     function glutton(){
-      const products = document.querySelectorAll('.product');
-      products[4].style.display = 'none';
-      products[8].style.display = 'none';
-      products[9].style.display = 'none';
+      applyFilters();
     }
     function diabetic(){
-      const products = document.querySelectorAll('.product');
-      products[4].style.display = 'none';
-      products[5].style.display = 'none';
-      products[6].style.display = 'none';
+      applyFilters();
     }
     function expensive(){
-      const products = document.querySelectorAll('.product');
-      products[6].style.display = 'none';
-      products[7].style.display = 'none';
-      products[8].style.display = 'none';
-      products[9].style.display = 'none';
+      applyFilters();
     }
     function allProduct(){
-      const products = document.querySelectorAll('.product');
-
+      // Show all products sorted by price
+      const allProducts = getProductsSortedByPrice();
+      renderProducts(allProducts);
+    }
+    
+    // Dynamic product rendering function
+    function renderProducts(products) {
+      const productsContainer = document.querySelector('.products');
+      if (!productsContainer) return;
+      
+      productsContainer.innerHTML = '';
+      
       products.forEach(product => {
-        product.style.display = 'table-column';
+        const productDiv = document.createElement('div');
+        productDiv.className = 'product';
+        productDiv.setAttribute('data-product-id', product.id);
+        
+        // Get current quantity from cart if item is already added
+        // Note: cartIndex and cartAmount are defined in product2cart.js
+        let quantity = 0;
+        if (typeof window.cartIndex !== 'undefined' && window.cartIndex) {
+          const cartItemIndex = window.cartIndex.indexOf(product.id);
+          if (cartItemIndex !== -1 && typeof window.cartAmount !== 'undefined' && window.cartAmount) {
+            quantity = window.cartAmount[cartItemIndex];
+          }
+        }
+        
+        let buttonHTML;
+        if (quantity === 0) {
+          buttonHTML = `<button class="action" onclick="addToCart(${product.id})">Add to Cart</button>`;
+        } else {
+          buttonHTML = `<button class="action" onclick="subToAmount(${product.id})">-</button>
+            <p class="amount">${quantity}</p>
+            <button class="action" onclick="addToAmount(${product.id})">+</button>`;
+        }
+        
+        productDiv.innerHTML = `
+          <div><img src="${product.image}" alt="${product.name}"></div>
+          <h3>${product.name}</h3>
+          <p class="price">$${product.price.toFixed(2)}</p>
+          <div class="buttons">${buttonHTML}</div>
+        `;
+        
+        productsContainer.appendChild(productDiv);
       });
     }
