@@ -22,6 +22,11 @@ function login() {
         document.querySelector('input[value="organic"]').checked = true;
         applyFilters();
       }
+      else{
+        signOut();
+        alert("username not found");
+        return;
+      }
 
       loginBox[0].innerHTML = `<p>${greeting}</p>
         <button class="action" onclick="signOut()">Sign Out</button>`;
