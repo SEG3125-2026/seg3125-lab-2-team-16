@@ -1,5 +1,4 @@
 // Enhanced cart functionality using centralized product data
-// Refactored by Eknoor Goraya
 
 const slider = document.getElementById("slider");
     // Cart arrays - made globally accessible for product rendering
@@ -71,7 +70,6 @@ const slider = document.getElementById("slider");
     }
     
     // Helper function to update product button based on cart state
-    // Enhanced by Eknoor Goraya
     function updateProductButton(productId, quantity) {
       const productElement = document.querySelector(`[data-product-id="${productId}"]`);
       if (!productElement) return;
@@ -89,7 +87,6 @@ const slider = document.getElementById("slider");
     }
     
     // Function to refresh all product buttons based on current cart state
-    // Created by Eknoor Goraya
     function refreshProductButtons() {
       if (typeof renderProducts === 'function') {
         // Get current filters and re-render products to update buttons
@@ -110,7 +107,7 @@ const slider = document.getElementById("slider");
         return;
       }
       
-      // Sort cart by price (ascending) - Enhanced by Eknoor Goraya
+      // Sort cart by price (ascending)
       sortCartByPrice();
       
       let total = 0;
@@ -134,7 +131,7 @@ const slider = document.getElementById("slider");
       list.appendChild(li);
     }
 
-    // Enhanced cart sorting by price - Created by Eknoor Goraya
+    // Enhanced cart sorting by price
     function sortCartByPrice(){
       // Create array of indices to sort
       const indices = cartIndex.map((_, i) => i);

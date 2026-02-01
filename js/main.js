@@ -51,7 +51,7 @@ function login() {
       applyFilters();
     });
     
-    // Initialize products on page load - Enhanced by Eknoor Goraya
+    // Initialize products on page load
     // Wait for all scripts to load before initializing
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', function() {
@@ -68,7 +68,6 @@ function login() {
     }
 
     // Enhanced filtering system using centralized product data
-    // Refactored by Eknoor Goraya
     function applyFilters() {
       const checkedDiets = Array.from(
         document.querySelectorAll('input[name="diet"]:checked')
@@ -109,7 +108,7 @@ function login() {
       renderProducts(allProducts);
     }
     
-    // Dynamic product rendering function - Created by Eknoor Goraya
+    // Dynamic product rendering function
     function renderProducts(products) {
       const productsContainer = document.querySelector('.products');
       if (!productsContainer) return;

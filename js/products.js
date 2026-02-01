@@ -1,5 +1,5 @@
 // Centralized product data structure
-// Created by Eknoor Goraya - Refactored product management system
+// Refactored product management system to use a single source of truth for all product information
 
 const productsData = [
   {
